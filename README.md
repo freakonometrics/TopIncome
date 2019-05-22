@@ -1,1 +1,1 @@
-# TopIncome
+# Pareto Models for Top Incomes

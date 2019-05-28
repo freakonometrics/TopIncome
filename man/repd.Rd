@@ -4,7 +4,7 @@
 \alias{repd}
 \title{Random Generation of the Extended Pareto distribution}
 \source{
-<https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+\url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 }
 \usage{
 repd(n, gamma, kappa, tau = -1)

@@ -4,7 +4,7 @@
 \alias{depd}
 \title{Density of the Extended Pareto distribution}
 \source{
-<https://github.com/TReynkens/ReIns/blob/master/R/EPD.R> Tom Reynkens, ReIns package version 1.0.7
+\url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 }
 \usage{
 depd(x, gamma, kappa, tau = -1, log = FALSE)

@@ -4,7 +4,7 @@
 \alias{pepd}
 \title{Cumulative Distribution Function of the Extended Pareto distribution}
 \source{
-<https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+\url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 }
 \usage{
 pepd(x, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE)

@@ -4,7 +4,7 @@
 \alias{qepd}
 \title{Quantile Function of the Extended Pareto distribution}
 \source{
-<https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+\url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 }
 \usage{
 qepd(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE)

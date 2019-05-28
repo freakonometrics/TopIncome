@@ -4,11 +4,11 @@
 \alias{EPDfit}
 \title{Fit the Extended Pareto distribution to a vector of observations, with weights, using maximum likelihood estimation}
 \source{
-adapted from <https://github.com/TReynkens/ReIns/blob/master/R/EPD.R> Tom Reynkens, ReIns package version 1.0.7
+adapted from \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 }
 \usage{
 EPDfit(data, tau, start = c(0.1, 1), warnings = FALSE,
-  weight = rep(1, length(data)))
+  weights = rep(1, length(data)))
 }
 \arguments{
 \item{data}{vector of observations}

@@ -1,7 +1,3 @@
-
-
-# Charpentier and Flachaire (2019), "Pareto Models for Top Incomes"
-
 #' Density of the Pareto 1 distribution
 #'
 #' @param x a (positive) vector
@@ -55,7 +51,7 @@ rpareto1 <- function (n, mu, alpha)  { mu*(1-runif(n))^(-1/alpha) }
 #' w <- rgamma(100,10,10)
 #' estim <- MLE.pareto1(data=x, weights=w, threshold=1)
 #' estim
-MLE.pareto1 <- function(data,weights=rep(1,length(x)),threshold=min(x))
+MLE.pareto1 <- function(data, weights=rep(1,length(x)), threshold=min(x))
 {
   foo=cbind(data,weights)
   foo=foo[foo[,1]>threshold,]
@@ -166,7 +162,6 @@ MLE.gpd <- function (data, weights=rep(1,length(x)), threshold = NA, nextremes =
               par.ests = par.ests, converged = converged, nllh.final = nllh.final)
   names(out$par.ests) <- c("xi", "beta")
   return(out)
-  
 }
 
 .EPDinput <- function(y, gamma, kappa, tau, kappaTau = TRUE) {
@@ -199,13 +194,11 @@ MLE.gpd <- function (data, weights=rep(1,length(x)), threshold = NA, nextremes =
     if (any(gamma <= 0)) {
         stop("gamma should be strictly positive.")
     }
-    
     if (kappaTau) {
         if (any(kappa <= pmax(-1, 1/tau))) {
             stop("kappa should be larger than max(-1,1/tau).")
         }
     }
-    
 
     ly <- length(y)
     lg <- length(gamma)
@@ -222,8 +215,6 @@ MLE.gpd <- function (data, weights=rep(1,length(x)), threshold = NA, nextremes =
             stop("All input arguments should have length 1 or equal length.")
         }
     }
-    
-    
 }
 
 #' Density of the Extended Pareto distribution
@@ -234,7 +225,7 @@ MLE.gpd <- function (data, weights=rep(1,length(x)), threshold = NA, nextremes =
 #' @param tau a (negative) number (default is -1)
 #' @log logical indicating if logarithm of density should be returned
 #' @return the density of the Extended Pareto distribution at points \code{x}
-#' @source <https://github.com/TReynkens/ReIns/blob/master/R/EPD.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' depd(2,.5,1,-1)
 depd <- function(x, gamma, kappa, tau = -1, log = FALSE) {
@@ -253,9 +244,7 @@ depd <- function(x, gamma, kappa, tau = -1, log = FALSE) {
     d <- 1 / (gamma*x^(1/gamma+1)) * (1+kappa*(1-x^tau))^(-1/gamma-1) *
     (1+kappa*(1-(1+tau)*x^tau))
     d[x <= 1] <- 0
-    
     if (log) d <- log(d)
-    
     return(d)
 }
 
@@ -267,7 +256,7 @@ depd <- function(x, gamma, kappa, tau = -1, log = FALSE) {
 #' @param tau a (negative) number (default is -1)
 #' @log logical indicating if logarithm of density should be returned
 #' @return the c.d.f. of the Extended Pareto distribution at points \code{x}
-#' @source <https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' pepd(2,.5,1,-1)
 pepd <- function(x, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
@@ -310,7 +299,7 @@ pepd <- function(x, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
 #' @param tau a (negative) number (default is -1)
 #' @log logical indicating if logarithm of density should be returned
 #' @return the c.d.f. of the Extended Pareto distribution at points \code{x}
-#' @source <https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' qepd(.5,.5,1,-1)
 qepd <-  function(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
@@ -347,11 +336,8 @@ qepd <-  function(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
         while (pepd(endpoint, gamma, kappa, tau) <= mx) {
             endpoint <- endpoint*10
         }
-        
     }
-    
-    
-    
+
     for (i in 1:l) {
         
         if (p[i] < .Machine$double.eps) {
@@ -387,7 +373,7 @@ qepd <-  function(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
 #' @param tau a (negative) number (default is -1)
 #' @param log logical indicating if logarithm of density should be returned
 #' @return a vector of \code{n} values generated from an Extended Pareto distribution
-#' @source <https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' set.seed(123)
 #' repd(6,.5,1,-1)
@@ -428,13 +414,13 @@ Hill = function(data,weights=rep(1,length(data))){
 #' Fit the Extended Pareto distribution to a vector of observations, with weights
 #'
 #' @param data vector of observations
-#' @param weight vector of (positive) weights
+#' @param weights vector of (positive) weights
 #' @param rho parameter of Fraga Alves et al. (2003) estimate
 #' @param start vector of length 2 containing the starting values for the optimisation
 #' @param direct logical indicating if the parameters are obtained by directly maximising the log-likelihood function
 #' @param warnings logical indicating if possible warnings from the optimisation function are shown
 #' @return a list with \code{k} the vector of the values of the tail parameter, \code{gamma} the vector of the corresponding estimates for the tail parameter of the EPD, \code{kappa} the vector of the corresponding MLE estimates for the kappa parameter of the EPD and \code{tau} the vector of the corresponding estimates for the second order tail index parameter of the EPD using Hill estimates and values for \code{rho}
-#' @source adapted from <https://github.com/TReynkens/ReIns/blob/master/R/EPD.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source adapted from \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' \dontrun{
 #' set.seed(123)
@@ -453,7 +439,7 @@ Hill = function(data,weights=rep(1,length(data))){
 #' tau
 #' [1] -3.34675
 #' }
-EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct = TRUE, warnings = FALSE, ...) {
+EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direct = TRUE, warnings = FALSE, ...) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -464,10 +450,9 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
     #    https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R
     #
     
-    
-    df=data.frame(data,weight)
+    df=data.frame(data,weights)
     df=df[order(df$data),]
-    w <- df$weight/sum(df$weight)
+    w <- df$weights/sum(df$weights)
     X <- as.numeric(df$data)
     n <- length(X)
     K <- (n-1)
@@ -498,7 +483,7 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
 }
 
 
-.EPDredMLE <- function(data, weight=rep(1,length(data)), rho = -1) {
+.EPDredMLE <- function(data, weights=rep(1,length(data)), rho = -1) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -510,9 +495,9 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
     #
     #   Fit EPD using approach of Beirlant, Joosens and Segers (2009).
     
-    df=data.frame(data,weight)
+    df=data.frame(data,weights)
     df=df[order(df$data),]
-    w <- df$w/sum(df$w)
+    w <- df$weights/sum(df$weights)
     X <- as.numeric(df$data)
     
     n <- length(X)
@@ -576,7 +561,7 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
     return(list(gamma=gamma, kappa=kappa, tau=tau))
 }
 
-.EPDdirectMLE <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL,  warnings = FALSE) {
+.EPDdirectMLE <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL,  warnings = FALSE) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -588,12 +573,11 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
     #
     
     
-    df=data.frame(data,weight)
+    df=data.frame(data,weights)
     df=df[order(df$data),]
-    w <- df$w/sum(df$w)
+    w <- df$weights/sum(df$weights)
     X <- as.numeric(df$data)
     n <- length(X)
-    
     
     if (n == 1) {
         stop("We need at least two data points.")
@@ -677,7 +661,7 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
 #' @param start vector of length 2 containing the starting values for the optimisation (default are \code{c(.1,1})
 #' @param warnings logical indicating if possible warnings from the optimisation function are shown
 #' @return a vector with \code{gamma} the vector of the corresponding estimates for the tail parameter of the EPD, \code{kappa} the vector of the corresponding MLE estimates for the kappa parameter of the EPD
-#' @source adapted from <https://github.com/TReynkens/ReIns/blob/master/R/EPD.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source adapted from \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' \dontrun{
 #' set.seed(123)
@@ -686,7 +670,7 @@ EPD <- function(data, weight=rep(1,length(data)), rho = -1, start = NULL, direct
 #' EPDfit(data=x, tau=-3.3, weight=w)
 #' [1] 0.32989522 0.08325996
 #' }
-EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,length(data))) {
+EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weights=rep(1,length(data))) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -697,7 +681,7 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,
     #    https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R
     #
     
-    w <- w/sum(w)
+    w <- weights/sum(weights)
     if (is.numeric(start) & length(start) == 2) {
         gamma_start <- start[1]
         kappa_start <- start[2]
@@ -725,7 +709,7 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,
 }
 
 
-.EPDneglogL <- function(theta, Y, tau, w) {
+.EPDneglogL <- function(theta, Y, tau, weights) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -736,7 +720,7 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,
     #    https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R
     #
     
-    w <- w/sum(w)
+    w <- weights/sum(weights)
     gamma <- theta[1]
     kappa <- theta[2]
     
@@ -749,7 +733,7 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,
     return(-logL)
 }
 
-.rhoEst <- function(data, alpha = 1, theta1 = 2, theta2 = 3, tau = 1, w=rep(1,length(data))) {
+.rhoEst <- function(data, alpha = 1, theta1 = 2, theta2 = 3, tau = 1, weights=rep(1,length(data))) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -765,16 +749,13 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,
         stop("alpha should be strictly positive.")
     }
     
-    
     if (tau <= 0) {
         stop("tau should be strictly positive.")
     }
   
-
-    
-    df=data.frame(data,w)
+    df=data.frame(data,weights)
     df=df[order(df$data),]
-    w <- df$w/sum(df$w)
+    w <- df$weights/sum(df$weights)
     X <- as.numeric(df$data)
     
     n <- length(X)
@@ -802,8 +783,7 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weight=rep(1,
 }
 
 
-ProbEPD <- function(data, q, gamma, kappa, tau, plot = FALSE, add = FALSE,
-main = "Estimates of small exceedance probability", ...) {
+ProbEPD <- function(data, q, gamma, kappa, tau, ...) {
     #
     #   Modified EPD function from the ReIns R package to have:
     #        - weighted ML estimation
@@ -844,7 +824,7 @@ main = "Estimates of small exceedance probability", ...) {
 #' @param kappa vector of \code{n-1} estimates for the EVD obtained from [EPD]
 #' @param tau vector of \code{n-1} estimates for the EVD obtained from [EPD]
 #' @return a list with \code{k} the vector of the values of the tail parameter k, \code{R} the vector of the corresponding return period and \code{q} the used large quantile
-#' @source <https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R> Tom Reynkens, ReIns package version 1.0.7
+#' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 ReturnEPD <- function(data, q, gamma, kappa, tau, ...) {
     #
     #   Modified EPD function from the ReIns R package to have:
@@ -855,7 +835,6 @@ ReturnEPD <- function(data, q, gamma, kappa, tau, ...) {
     #    https://github.com/TReynkens/ReIns/blob/master/R/EPD.R
     #    https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R
     #
-    
     
     if ( length(gamma) != length(kappa) | length(gamma) != length(tau)) {
         stop("gamma, kappa and tau should have equal length.")
@@ -990,70 +969,91 @@ TopShare <- function(data, weights=rep(1,length(x)), p=.1, q=.1, method="edf", e
     
 }
 
-tidy_income <- function(income, weight){
-df=data.frame(w=weight, y=income)
-df$w=df$w/sum(df$w)
+#' Convert income/wealth Data
+#'
+#' @param income a vector of data (income or wealth)
+#' @param weight a vector of weight (same length as \code{income}
+#' @return a dataframe with 4 columns, \code{y} the vector income (or wealth), \code{weights} the vector of weights, \code{Fw} the cumulated proportion of people (with weights) and \code{Fx} the cumulated proportion of people (without weights)
+tidy_income <- function(income, weights){
+df=data.frame(w=weights, y=income)
+df$w=df$weights/sum(df$weights)
 df=df[order(df$y),]
-Fw=cumsum(df$w)/(sum(df$w)+df$w[1])
-data = data.frame(df,Fw)
-data = data.frame(df,Fw, Fx)
+Fw=cumsum(df$weights)/(sum(df$weights)+df$weights[1])
+n=length(df$y)
+Fx=(1:n)/(n+1)
+data = data.frame(y=df$y, weights=df$w, Fw=Fw, Fx=Fx)
 return(data)
 }
 
-Pareto_diagram = function(data, p=.01, q=.1){
+#' Pareto diagrams - Pareto 1, GPD and EPD
+#'
+#' @param data dataframe obtained from \code{tidy_income} function
+#' @param p numeric, the probability level (default 1%)
+#' @param q numeric, the probability level to model a Pareto distribution (default 10% - top 10%)
+#' @param viz logical \code{TRUE} to plot the estimates
+#' @return a table with estimations of top share and a graph
+Pareto_diagram = function(data, p=.01, q=.1, viz=TRUE){
 
-par(mfrow=c(1,1), mar=c(4, 4, 4, 1))  # bottom, left, top, right
-
-res1=TopShare(data$y, weights=data$w, p=p, q=q, method="pareto1")
-res2=TopShare(data$y, weights=data$w, p=p, q=q, method="gpd")
-res3=TopShare(data$y, weights=data$w, p=p, q=q, method="epd", epd.direct=epd.direct)
+res1=TopShare(data$y, weights=data$weights, p=p, q=q, method="pareto1")
+res2=TopShare(data$y, weights=data$weights, p=p, q=q, method="gpd")
+res3=TopShare(data$y, weights=data$weights, p=p, q=q, method="epd", epd.direct=epd.direct)
 
 pot=data[data$y>0,]   # Keep positive data
-plot(log(pot$y), log(1-pot$Fw), main=mytitle, xlab="log(x)", ylab="log(1-F(x))", cex=.6, col="gray", xlim=PDxlim)
+
+if(viz) par(mfrow=c(1,1), mar=c(4, 4, 4, 1))  # bottom, left, top, right
+if(viz) plot(log(pot$y), log(1-pot$Fw), main=mytitle, xlab="log(x)", ylab="log(1-F(x))", cex=.6, col="gray", xlim=PDxlim)
 
 u=seq(log(res1$threshold), 30, length.out=500)
 yhat.par1=ppareto1(exp(u),mu=res1$threshold,alpha=res1$coef$alpha)
 yhat.par2=pgpd(exp(u),xi=res2$coef$par.ests["xi"],mu=res2$coef$threshold,beta=res2$coef$par.ests["beta"])
 yhat.epd=pepd(exp(u)/res3$threshold,gamma=res3$coef$gamma,kappa=res3$coef$kappa,tau=res3$coef$tau)
+if(viz){
 lines(u,log(1-yhat.par1)+log(q), col="blue", lty=2, lwd=1.5)
 lines(u,log(1-yhat.epd)+log(q), col="red", lty=1, lwd=1.5)
 lines(u,log(1-yhat.par2)+log(q),col="green", lty=3, lwd=1.5)
 legend("topright", legend=c("Pareto 1", "GPD", "EPD"), col=c("blue","green", "red"), lty=c(2,3,1))
-
+}
 
 # plot percentile as vertical dashed lines
 
-res90=TopShare(data$y, weights=data$w, p=p, q=.10, method="pareto1")
-abline(v=log(res90$threshold), col="lightgrey", lty=2)  # percentile 90
+res90=TopShare(data$y, weights=data$weights, p=p, q=.10, method="pareto1")
+if(viz) abline(v=log(res90$threshold), col="lightgrey", lty=2)  # percentile 90
 #legend(log(res90$threshold)-top.x, top.y, legend=c("top10%"), cex=.82, bty="n")
-legend(log(res90$threshold)-top.x, top.y, legend=expression(italic('q')[90]), cex=.9, bty="n")
+if(viz) legend(log(res90$threshold)-top.x, top.y, legend=expression(italic('q')[90]), cex=.9, bty="n")
 
-res95=TopShare(data$y, weights=data$w, p=p, q=.05, method="pareto1")
-abline(v=log(res95$threshold), col="lightgrey", lty=2)  # percentile 95
-legend(log(res95$threshold)-top.x, top.y, legend=expression(italic('q')[95]), cex=.9, bty="n")
+res95=TopShare(data$y, weights=data$weights, p=p, q=.05, method="pareto1")
+if(viz) abline(v=log(res95$threshold), col="lightgrey", lty=2)  # percentile 95
+if(viz) legend(log(res95$threshold)-top.x, top.y, legend=expression(italic('q')[95]), cex=.9, bty="n")
 
-res99=TopShare(data$y, weights=data$w, p=p, q=.01, method="pareto1")
-abline(v=log(res99$threshold), col="lightgrey", lty=2)  # percentile 99
+if(viz) res99=TopShare(data$y, weights=data$weights, p=p, q=.01, method="pareto1")
+if(viz) abline(v=log(res99$threshold), col="lightgrey", lty=2)  # percentile 99
 legend(log(res99$threshold)-top.x, top.y, legend=expression(italic('q')[99]), cex=.9, bty="n")
 }
 
+#' Table of top shares (using three thresholds)
+#'
+#' @param data dataframe obtained from \code{tidy_income} function
+#' @p probability level (default 1%)
+#' @param q1 numeric, the probability level to model a Pareto distribution (default 10% - top 10%)
+#' @param q2 numeric, the probability level to model a Pareto distribution (default 5% - top 5%)
+#' @param q3 numeric, the probability level to model a Pareto distribution (default 1% - top 1%)
 Table_Top_Share = function(data, p=.01, q1=.1 , q2=.05 , q3=.01){
 
-res90=TopShare(data$y, weights=data$w, p=p, q=q1, method="pareto1")
-res95=TopShare(data$y, weights=data$w, p=p, q=q2, method="pareto1")
-res99=TopShare(data$y, weights=data$w, p=p, q=q3, method="pareto1")
+res90=TopShare(data$y, weights=data$weights, p=p, q=q1, method="pareto1")
+res95=TopShare(data$y, weights=data$weights, p=p, q=q2, method="pareto1")
+res99=TopShare(data$y, weights=data$weights, p=p, q=q3, method="pareto1")
 pareto1.index=cbind(res90$index, res95$index, res99$index)
 pareto1.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
-res90=TopShare(data$y, weights=data$w, p=p, q=q1, method="pareto2")
-res95=TopShare(data$y, weights=data$w, p=p, q=q2, method="pareto2")
-res99=TopShare(data$y, weights=data$w, p=p, q=q3, method="pareto2")
+res90=TopShare(data$y, weights=data$weights, p=p, q=q1, method="pareto2")
+res95=TopShare(data$y, weights=data$weights, p=p, q=q2, method="pareto2")
+res99=TopShare(data$y, weights=data$weights, p=p, q=q3, method="pareto2")
 gpd.index=cbind(res90$index, res95$index, res99$index)
 gpd.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
-res90=TopShare(data$y, weights=data$w, p=p, q=q1, method="epd")
-res95=TopShare(data$y, weights=data$w, p=p, q=q2, method="epd")
-res99=TopShare(data$y, weights=data$w, p=p, q=q3, method="epd")
+res90=TopShare(data$y, weights=data$weights, p=p, q=q1, method="epd")
+res95=TopShare(data$y, weights=data$weights, p=p, q=q2, method="epd")
+res99=TopShare(data$y, weights=data$weights, p=p, q=q3, method="epd")
 epd.index=cbind(res90$index, res95$index, res99$index)
 epd.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
@@ -1071,6 +1071,13 @@ cat("----- top share ------\n")
 cat(T)
     return(T)}
 
+#' Top Income plot
+#'
+#' @param data dataframe obtained from \code{tidy_income} function
+#' @p probability level (default 1%)
+#' @param thr numeric vector of probability levels to model a Pareto distribution (from 85% up to 99.9%)
+#' @param TSlim numeric 2-vector, range of y for the plot (default \cote{NULL})
+#' @param tail logical to plot the tail index (default \cote{TRUE})
 Top_Income = function(data, p=.01, thr=seq(.85,.999,by=.001), TSlim=NULL, tail = TRUE){
 
 thr=round(thr,10)
@@ -1079,10 +1086,10 @@ tis.index=matrix(0,NROW(thr),7)
 tis.alpha=matrix(0,NROW(thr),7)
 for(i in 1:NROW(thr)) {
     
-    res1=TopShare(data$y, weights=data$w, p=p, q=1-thr[i], method="pareto1")
-    res2=TopShare(data$y, weights=data$w, p=p, q=1-thr[i], method="gpd")
-    res3=TopShare(data$y, weights=data$w, p=p, q=1-thr[i], method="epd", epd.direct=epd.direct)
-    res4=TopShare(data$y, weights=data$w, p=p, method="edf")
+    res1=TopShare(data$y, weights=data$weights, p=p, q=1-thr[i], method="pareto1")
+    res2=TopShare(data$y, weights=data$weights, p=p, q=1-thr[i], method="gpd")
+    res3=TopShare(data$y, weights=data$weights, p=p, q=1-thr[i], method="epd", epd.direct=epd.direct)
+    res4=TopShare(data$y, weights=data$weights, p=p, method="edf")
     
     tis.index[i,1]=res1$threshold     # threshold y0
     tis.index[i,2]=res1$coef$k          # k largest observations

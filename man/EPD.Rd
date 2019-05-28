@@ -4,16 +4,16 @@
 \alias{EPD}
 \title{Fit the Extended Pareto distribution to a vector of observations, with weights}
 \source{
-adapted from <https://github.com/TReynkens/ReIns/blob/master/R/EPD.R> Tom Reynkens, ReIns package version 1.0.7
+adapted from \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 }
 \usage{
-EPD(data, weight = rep(1, length(data)), rho = -1, start = NULL,
+EPD(data, weights = rep(1, length(data)), rho = -1, start = NULL,
   direct = TRUE, warnings = FALSE, ...)
 }
 \arguments{
 \item{data}{vector of observations}
 
-\item{weight}{vector of (positive) weights}
+\item{weights}{vector of (positive) weights}
 
 \item{rho}{parameter of Fraga Alves et al. (2003) estimate}
 

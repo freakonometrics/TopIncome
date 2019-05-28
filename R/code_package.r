@@ -426,7 +426,7 @@ Hill = function(data,weights=rep(1,length(data))){
 #' set.seed(123)
 #' x <- repd(100,.5,1,-1)
 #' w <- rgamma(100,10,10)
-#' EPD(data=x, weight=w)
+#' EPD(data=x, weights=w)
 #' k
 #' [1] 99
 #'
@@ -462,10 +462,10 @@ EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direc
     }
     
     if (direct) {
-        EPD <- .EPDdirectMLE(data=data, weight=w, rho=rho, start=start, warnings=warnings)
+        EPD <- .EPDdirectMLE(data=data, weights=w, rho=rho, start=start, warnings=warnings)
     } else {
         # Select parameter using approach of Beirlant, Joosens and Segers (2009).
-        EPD <- .EPDredMLE(data=data, weight=w, rho=rho)
+        EPD <- .EPDredMLE(data=data, weights=w, rho=rho)
     }
     
     if (length(rho) == 1) {
@@ -638,7 +638,7 @@ EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direc
             }
             
             if (tau[k,j] < 0) {
-                tmp <- EPDfit(epddata, start=start2, tau=tau[k,j], w=epdw)
+                tmp <- EPDfit(epddata, start=start2, tau=tau[k,j], weights=epdw)
                 gamma[k,j] <- tmp[1]
                 kappa[k,j] <- tmp[2]
             } else {
@@ -667,7 +667,7 @@ EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direc
 #' set.seed(123)
 #' x <- repd(100,.5,1,-1)
 #' w <- rgamma(100,10,10)
-#' EPDfit(data=x, tau=-3.3, weight=w)
+#' EPDfit(data=x, tau=-3.3, weights=w)
 #' [1] 0.32989522 0.08325996
 #' }
 EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weights=rep(1,length(data))) {
@@ -867,7 +867,7 @@ ReturnEPD <- function(data, q, gamma, kappa, tau, ...) {
 #' @param method (default \code{"edf"})
 #' @param edp.direct logical (default \code{TRUE})
 #' @return blah blah
-TopShare <- function(data, weights=rep(1,length(x)), p=.1, q=.1, method="edf", epd.direct=TRUE) {
+TopShare <- function(data, p=.1, q=.1, method="edf", epd.direct=TRUE) {
     require(Hmisc)
     #
     # p : top 100p% share
@@ -876,7 +876,8 @@ TopShare <- function(data, weights=rep(1,length(x)), p=.1, q=.1, method="edf", e
     # method="edf" : sample top share, that is, based on the EDF
     # method="pareto1" : EDF+Pareto1
     #
-    x = data
+    x = data$y
+    weights = data$weights
     if (p>1) stop('Error: p should be smaller than 1 \n\n')
     if (p<0) stop('Error: p should be greater than 0 \n\n')
     up=Hmisc::wtd.quantile(x, weights=weights, probs=1-p, normwt=TRUE) # weighted (1-p)-quantile
@@ -897,8 +898,8 @@ TopShare <- function(data, weights=rep(1,length(x)), p=.1, q=.1, method="edf", e
     
     u=Hmisc::wtd.quantile(x, weights=weights, probs=1-q, normwt=TRUE)
     u=as.numeric(u)  # threshold = weighted (1-q)-quantile
-    data=cbind(x,weights)
-    dataq=data[x<u,]
+    datax=cbind(x,weights)
+    dataq=datax[x<u,]
     xq = Hmisc::wtd.mean(dataq[,1], weights=dataq[,2])
     
     if(method=="pareto1" || method=="pareto2" || method=="gpd") {
@@ -933,8 +934,8 @@ TopShare <- function(data, weights=rep(1,length(x)), p=.1, q=.1, method="edf", e
     ## Top Share based on EPD Model
     if(method=="epd") {
         
-        dataqq=data[x>=u,]
-        coef=EPD(dataqq[,1], w=dataqq[,2], direct=epd.direct)
+        dataqq=data[data>=u,]
+        coef=EPD(dataqq[,1], weights=dataqq[,2], direct=epd.direct)
         delta=coef$kappa
         tau=coef$tau
         alpha=1/coef$gamma
@@ -976,9 +977,9 @@ TopShare <- function(data, weights=rep(1,length(x)), p=.1, q=.1, method="edf", e
 #' @return a dataframe with 4 columns, \code{y} the vector income (or wealth), \code{weights} the vector of weights, \code{Fw} the cumulated proportion of people (with weights) and \code{Fx} the cumulated proportion of people (without weights)
 tidy_income <- function(income, weights){
 df=data.frame(w=weights, y=income)
-df$w=df$weights/sum(df$weights)
+df$w=df$w/sum(df$w)
 df=df[order(df$y),]
-Fw=cumsum(df$weights)/(sum(df$weights)+df$weights[1])
+Fw=cumsum(df$w)/(sum(df$w)+df$w[1])
 n=length(df$y)
 Fx=(1:n)/(n+1)
 data = data.frame(y=df$y, weights=df$w, Fw=Fw, Fx=Fx)
@@ -994,14 +995,14 @@ return(data)
 #' @return a table with estimations of top share and a graph
 Pareto_diagram = function(data, p=.01, q=.1, viz=TRUE){
 
-res1=TopShare(data$y, weights=data$weights, p=p, q=q, method="pareto1")
-res2=TopShare(data$y, weights=data$weights, p=p, q=q, method="gpd")
-res3=TopShare(data$y, weights=data$weights, p=p, q=q, method="epd", epd.direct=epd.direct)
+res1=TopShare(data, p=p, q=q, method="pareto1")
+res2=TopShare(data, p=p, q=q, method="gpd")
+res3=TopShare(data, p=p, q=q, method="epd", epd.direct=epd.direct)
 
 pot=data[data$y>0,]   # Keep positive data
 
 if(viz) par(mfrow=c(1,1), mar=c(4, 4, 4, 1))  # bottom, left, top, right
-if(viz) plot(log(pot$y), log(1-pot$Fw), main=mytitle, xlab="log(x)", ylab="log(1-F(x))", cex=.6, col="gray", xlim=PDxlim)
+if(viz) plot(log(pot$y), log(1-pot$Fw), xlab="log(x)", ylab="log(1-F(x))", cex=.6, col="gray", xlim=PDxlim)
 
 u=seq(log(res1$threshold), 30, length.out=500)
 yhat.par1=ppareto1(exp(u),mu=res1$threshold,alpha=res1$coef$alpha)
@@ -1016,16 +1017,16 @@ legend("topright", legend=c("Pareto 1", "GPD", "EPD"), col=c("blue","green", "re
 
 # plot percentile as vertical dashed lines
 
-res90=TopShare(data$y, weights=data$weights, p=p, q=.10, method="pareto1")
+res90=TopShare(data, p=p, q=.10, method="pareto1")
 if(viz) abline(v=log(res90$threshold), col="lightgrey", lty=2)  # percentile 90
 #legend(log(res90$threshold)-top.x, top.y, legend=c("top10%"), cex=.82, bty="n")
 if(viz) legend(log(res90$threshold)-top.x, top.y, legend=expression(italic('q')[90]), cex=.9, bty="n")
 
-res95=TopShare(data$y, weights=data$weights, p=p, q=.05, method="pareto1")
+res95=TopShare(data, p=p, q=.05, method="pareto1")
 if(viz) abline(v=log(res95$threshold), col="lightgrey", lty=2)  # percentile 95
 if(viz) legend(log(res95$threshold)-top.x, top.y, legend=expression(italic('q')[95]), cex=.9, bty="n")
 
-if(viz) res99=TopShare(data$y, weights=data$weights, p=p, q=.01, method="pareto1")
+if(viz) res99=TopShare(data, p=p, q=.01, method="pareto1")
 if(viz) abline(v=log(res99$threshold), col="lightgrey", lty=2)  # percentile 99
 legend(log(res99$threshold)-top.x, top.y, legend=expression(italic('q')[99]), cex=.9, bty="n")
 }
@@ -1039,21 +1040,21 @@ legend(log(res99$threshold)-top.x, top.y, legend=expression(italic('q')[99]), ce
 #' @param q3 numeric, the probability level to model a Pareto distribution (default 1% - top 1%)
 Table_Top_Share = function(data, p=.01, q1=.1 , q2=.05 , q3=.01){
 
-res90=TopShare(data$y, weights=data$weights, p=p, q=q1, method="pareto1")
-res95=TopShare(data$y, weights=data$weights, p=p, q=q2, method="pareto1")
-res99=TopShare(data$y, weights=data$weights, p=p, q=q3, method="pareto1")
+res90=TopShare(data, p=p, q=q1, method="pareto1")
+res95=TopShare(data, p=p, q=q2, method="pareto1")
+res99=TopShare(data, p=p, q=q3, method="pareto1")
 pareto1.index=cbind(res90$index, res95$index, res99$index)
 pareto1.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
-res90=TopShare(data$y, weights=data$weights, p=p, q=q1, method="pareto2")
-res95=TopShare(data$y, weights=data$weights, p=p, q=q2, method="pareto2")
-res99=TopShare(data$y, weights=data$weights, p=p, q=q3, method="pareto2")
+res90=TopShare(data, p=p, q=q1, method="pareto2")
+res95=TopShare(data, p=p, q=q2, method="pareto2")
+res99=TopShare(data, p=p, q=q3, method="pareto2")
 gpd.index=cbind(res90$index, res95$index, res99$index)
 gpd.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
-res90=TopShare(data$y, weights=data$weights, p=p, q=q1, method="epd")
-res95=TopShare(data$y, weights=data$weights, p=p, q=q2, method="epd")
-res99=TopShare(data$y, weights=data$weights, p=p, q=q3, method="epd")
+res90=TopShare(data, p=p, q=q1, method="epd")
+res95=TopShare(data, p=p, q=q2, method="epd")
+res99=TopShare(data, p=p, q=q3, method="epd")
 epd.index=cbind(res90$index, res95$index, res99$index)
 epd.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
@@ -1061,14 +1062,14 @@ cutoff=c(1-q1,1-q2,1-q3)
 cat("----- index ----------\n")
 M=rbind(cutoff,pareto1.index,gpd.index,epd.index)
 colnames(M)=c("index1","index2","index3")
-cat(M,"\n")
+print(M)
 cat("----- alpha ----------\n")
 M=rbind(cutoff,pareto1.alpha,gpd.alpha,epd.alpha)
 colnames(M)=c("alpha1","alpha2","alpha3")
-cat(M,"\n")
+print(M)
 cat("----- top share ------\n")
-    T=TopShare(data$y, weights=data$w, p=p)
-cat(T)
+    T=TopShare(data, p=p)
+print(T)
     return(T)}
 
 #' Top Income plot
@@ -1086,10 +1087,10 @@ tis.index=matrix(0,NROW(thr),7)
 tis.alpha=matrix(0,NROW(thr),7)
 for(i in 1:NROW(thr)) {
     
-    res1=TopShare(data$y, weights=data$weights, p=p, q=1-thr[i], method="pareto1")
-    res2=TopShare(data$y, weights=data$weights, p=p, q=1-thr[i], method="gpd")
-    res3=TopShare(data$y, weights=data$weights, p=p, q=1-thr[i], method="epd", epd.direct=epd.direct)
-    res4=TopShare(data$y, weights=data$weights, p=p, method="edf")
+    res1=TopShare(data, p=p, q=1-thr[i], method="pareto1")
+    res2=TopShare(data, p=p, q=1-thr[i], method="gpd")
+    res3=TopShare(data, p=p, q=1-thr[i], method="epd", epd.direct=epd.direct)
+    res4=TopShare(data, p=p, method="edf")
     
     tis.index[i,1]=res1$threshold     # threshold y0
     tis.index[i,2]=res1$coef$k          # k largest observations
@@ -1126,7 +1127,7 @@ legend(tis.alpha[(tis.alpha[,3]==.95),2]-top.xx,top.yy, legend=expression(italic
 legend(tis.alpha[(tis.alpha[,3]==.99),2]-top.xx,top.yy, legend=expression(italic('q')[99]), cex=.9, bty="n")
 }
 
-if(is.null(TSlim)) TSlim = range(tis.index)
+if(is.null(TSlim)) TSlim = c(0.1,0.4)
 
 plot(tis.index[,2],tis.index[,4], ylim=TSlim, type="b", cex=.75, pch=3, main="Top 1% share", xlab="k largest values", ylab="share", col="blue")
 lines(tis.index[,2],tis.index[,4], col="blue", type="l", cex=.75)

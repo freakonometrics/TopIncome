@@ -4,8 +4,7 @@
 \alias{TopShare}
 \title{Estimate Top Share}
 \usage{
-TopShare(data, weights = rep(1, length(x)), p = 0.1, q = 0.1,
-  method = "edf", epd.direct = TRUE)
+TopShare(data, p = 0.1, q = 0.1, method = "edf", epd.direct = TRUE)
 }
 \arguments{
 \item{data}{a vector of observations}

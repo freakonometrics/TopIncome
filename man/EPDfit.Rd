@@ -34,7 +34,7 @@ Fit the Extended Pareto distribution to a vector of observations, with weights, 
 set.seed(123)
 x <- repd(100,.5,1,-1)
 w <- rgamma(100,10,10)
-EPDfit(data=x, tau=-3.3, weight=w)
+EPDfit(data=x, tau=-3.3, weights=w)
 [1] 0.32989522 0.08325996
 }
 }

@@ -4,7 +4,12 @@ Title: Estimation of Top Incomes Using Pareto Models
 Version: 0.1.0
 Author: Arthur Charpentier and Emmanuel Flachaire
 Maintainer: <charpentier.arthur@uqam.ca>
-Description: Use of Pareto 1, Generalized Pareto and Extended Pareto to Estimate Top Shares of Incomes and Wealth Distributions. 
+Description: Use of Pareto 1, Generalized Pareto and Extended Pareto to Estimate Top Shares of Incomes and Wealth Distributions.
+Imports:
+  Hmisc,
+  graphics,
+  stats,
+  utils
 License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true 

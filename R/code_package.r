@@ -1,9 +1,15 @@
+#' import HMisc
+#' importFrom("graphics", "abline", "legend", "lines", "par", "plot")
+#' importFrom("stats", "integrate", "optim", "optimise", "runif", "var")
+#' importFrom("utils", "install.packages")
+
 #' Density of the Pareto 1 distribution
 #'
 #' @param x a (positive) vector
 #' @param mu a number (the lower bound)
 #' @param alpha a number (the tail index)
 #' @return the density of the Pareto 1 distribution at points \code{x}
+#' @seealso [ppareto1()], [qpareto1()] and [rpareto1()]
 #' @examples
 #' dpareto1(2, 1, 1.5)
 dpareto1 <- function (x, mu, alpha)  { alpha*mu^alpha/x^(alpha+1) }
@@ -223,7 +229,7 @@ MLE.gpd <- function (data, weights=rep(1,length(x)), threshold = NA, nextremes =
 #' @param gamma a (strictly positive) number (the tail index)
 #' @param kappa a number - must be larger than max{-1,1/tau}
 #' @param tau a (negative) number (default is -1)
-#' @log logical indicating if logarithm of density should be returned
+#' @param log logical indicating if logarithm of density should be returned
 #' @return the density of the Extended Pareto distribution at points \code{x}
 #' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
@@ -254,7 +260,7 @@ depd <- function(x, gamma, kappa, tau = -1, log = FALSE) {
 #' @param gamma a (strictly positive) number (the tail index)
 #' @param kappa a number - must be larger than max{-1,1/tau}
 #' @param tau a (negative) number (default is -1)
-#' @log logical indicating if logarithm of density should be returned
+#' @param log logical indicating if logarithm of density should be returned
 #' @return the c.d.f. of the Extended Pareto distribution at points \code{x}
 #' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
@@ -297,7 +303,7 @@ pepd <- function(x, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
 #' @param gamma a (strictly positive) number (the tail index)
 #' @param kappa a number - must be larger than max{-1,1/tau}
 #' @param tau a (negative) number (default is -1)
-#' @log logical indicating if logarithm of density should be returned
+#' @param log logical indicating if logarithm of density should be returned
 #' @return the c.d.f. of the Extended Pareto distribution at points \code{x}
 #' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
@@ -313,7 +319,7 @@ qepd <-  function(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
     #    https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R
     #
     
-    .EPDinput(p, gamma, kappa, tau, kappaTau = TRUE)
+.EPDinput(p, gamma, kappa, tau, kappaTau = TRUE)
     
     
     if (log.p) p <- exp(p)
@@ -364,7 +370,6 @@ qepd <-  function(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
     return(Q)
 }
 
-
 #' Random Generation of the Extended Pareto distribution
 #'
 #' @param n integer, number of generations
@@ -376,18 +381,8 @@ qepd <-  function(p, gamma, kappa, tau = -1, lower.tail = TRUE, log.p = FALSE) {
 #' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
 #' set.seed(123)
-#' repd(6,.5,1,-1)
+#' repd(6, gamma=.5,kappa=1,tau=-1)
 repd <-  function(n, gamma, kappa, tau = -1) {
-    #
-    #   Modified EPD function from the ReIns R package to have:
-    #        - weighted ML estimation
-    #        - results from only one cutoff
-    #        - direct ML estimation by default
-    # original R code :  ReIns package version 1.0.7
-    #    https://github.com/TReynkens/ReIns/blob/master/R/EPD.R
-    #    https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R
-    #
-    
     return(qepd(runif(n), gamma=gamma, kappa=kappa, tau=tau))
 }
 
@@ -397,12 +392,10 @@ repd <-  function(n, gamma, kappa, tau = -1) {
 #' @param weights the vector of weights
 #' @return Hill estimator of \code{gamma} (inverse of \code{alpha})
 #' @examples
-#' \dontrun{
 #' set.seed(123)
 #' x <- rpareto1(100, 1, 1.5)
 #' w <- rgamma(100,10,10)
 #' Hill(x,w)
-# }
 Hill = function(data,weights=rep(1,length(data))){
     w <- weights/sum(weights)
     n <- length(data)
@@ -422,23 +415,10 @@ Hill = function(data,weights=rep(1,length(data))){
 #' @return a list with \code{k} the vector of the values of the tail parameter, \code{gamma} the vector of the corresponding estimates for the tail parameter of the EPD, \code{kappa} the vector of the corresponding MLE estimates for the kappa parameter of the EPD and \code{tau} the vector of the corresponding estimates for the second order tail index parameter of the EPD using Hill estimates and values for \code{rho}
 #' @source adapted from \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
-#' \dontrun{
 #' set.seed(123)
-#' x <- repd(100,.5,1,-1)
+#' x <- rpareto1(100,1,.5)
 #' w <- rgamma(100,10,10)
 #' EPD(data=x, weights=w)
-#' k
-#' [1] 99
-#'
-#' gamma
-#' [1] 0.3843927
-#'
-#' kappa
-#' [1] 0.1819718
-#'
-#' tau
-#' [1] -3.34675
-#' }
 EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direct = TRUE, warnings = FALSE, ...) {
     #
     #   Modified EPD function from the ReIns R package to have:
@@ -513,7 +493,7 @@ EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direc
     H <- Hill(data, w)$gamma
     
     if (all(rho > 0) & nrho == 1) {
-        rho <- .rhoEst(data, alpha=1, tau=rho, w=w)$rho
+        rho <- .rhoEst(data, alpha=1, tau=rho, weights=w)$rho
         beta <- -rho
         
     } else if (all(rho < 0)) {
@@ -589,7 +569,7 @@ EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direc
     H <- Hill(data, w)$gamma
     
     if (all(rho > 0) & nrho == 1) {
-        rho <- .rhoEst(data, alpha=1, tau=rho, w=w)$rho
+        rho <- .rhoEst(data, alpha=1, tau=rho, weights=w)$rho
         beta <- -rho
         
     } else if (all(rho < 0)) {
@@ -663,13 +643,10 @@ EPD <- function(data, weights=rep(1,length(data)), rho = -1, start = NULL, direc
 #' @return a vector with \code{gamma} the vector of the corresponding estimates for the tail parameter of the EPD, \code{kappa} the vector of the corresponding MLE estimates for the kappa parameter of the EPD
 #' @source adapted from \url{https://github.com/TReynkens/ReIns/blob/master/R/EPD.R} Tom Reynkens, ReIns package version 1.0.7
 #' @examples
-#' \dontrun{
 #' set.seed(123)
-#' x <- repd(100,.5,1,-1)
+#' x <- rpareto1(100, mu=1, alpha=.5)
 #' w <- rgamma(100,10,10)
 #' EPDfit(data=x, tau=-3.3, weights=w)
-#' [1] 0.32989522 0.08325996
-#' }
 EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weights=rep(1,length(data))) {
     #
     #   Modified EPD function from the ReIns R package to have:
@@ -694,7 +671,7 @@ EPDfit <- function(data, tau, start = c(0.1, 1), warnings = FALSE, weights=rep(1
         sg <- c(NA, NA)
     } else {
 
-        fit <- optim(par=c(gamma_start, kappa_start), fn=.EPDneglogL, Y=data, tau=tau, w=w)
+        fit <- optim(par=c(gamma_start, kappa_start), fn=.EPDneglogL, Y=data, tau=tau, weights=w)
 
         sg <- fit$par
         
@@ -825,6 +802,11 @@ ProbEPD <- function(data, q, gamma, kappa, tau, ...) {
 #' @param tau vector of \code{n-1} estimates for the EVD obtained from [EPD]
 #' @return a list with \code{k} the vector of the values of the tail parameter k, \code{R} the vector of the corresponding return period and \code{q} the used large quantile
 #' @source \url{https://github.com/TReynkens/ReIns/blob/master/R/Distributions.R} Tom Reynkens, ReIns package version 1.0.7
+#' @examples
+#' set.seed(123)
+#' x <- rpareto1(100, mu=1, alpha=1.5)
+#' fit <- EPD(x)
+#' ReturnEPD(data=x, q=.01, gamma=fit$gamma, kappa=fit$kappa, tau=fit$tau)
 ReturnEPD <- function(data, q, gamma, kappa, tau, ...) {
     #
     #   Modified EPD function from the ReIns R package to have:
@@ -864,10 +846,16 @@ ReturnEPD <- function(data, q, gamma, kappa, tau, ...) {
 #' @param weight a vector of weights
 #' @param p (default \code{0.1})
 #' @param q (default \code{0.1})
-#' @param method (default \code{"edf"})
+#' @param method (default \code{"edf"}, but can be \code{"pareto1"} or \code{"gpd"})
 #' @param edp.direct logical (default \code{TRUE})
-#' @return blah blah
+#' @return estimation of the share of income/wealth owned by the top 100p% of the population, assuming that the top 100q% of the distribution is Pareto distributed
+#' @examples
+#' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+#' df <- read.table(url_1,sep=";",header=TRUE)
+#' data_1  <-  tidy_income(income = df$y, weights = df$w)
+#' TopShare(data_1)
 TopShare <- function(data, p=.1, q=.1, method="edf", epd.direct=TRUE) {
+	if (!require("Hmisc")) install.packages("Hmisc")
     require(Hmisc)
     #
     # p : top 100p% share
@@ -905,12 +893,12 @@ TopShare <- function(data, p=.1, q=.1, method="edf", epd.direct=TRUE) {
     if(method=="pareto1" || method=="pareto2" || method=="gpd") {
         # Estimate the Pareto distribution with weighted data
         if(method=="pareto1") {
-            coef=MLE.pareto1(x,w=weights,threshold=u)
+            coef=MLE.pareto1(x,weights=weights,threshold=u)
             sigma=u
             alpha=coef$alpha
         }
         if(method=="pareto2" || method=="gpd") {
-            coef=MLE.gpd(x,w=weights,threshold=u)
+            coef=MLE.gpd(x,weights=weights,threshold=u)
             sigma=coef$par.ests["beta"]/coef$par.ests["xi"]
             alpha=1/coef$par.ests["xi"]
         }
@@ -973,8 +961,13 @@ TopShare <- function(data, p=.1, q=.1, method="edf", epd.direct=TRUE) {
 #' Convert income/wealth Data
 #'
 #' @param income a vector of data (income or wealth)
-#' @param weight a vector of weight (same length as \code{income}
+#' @param weights a vector of weight (same length as \code{income}
 #' @return a dataframe with 4 columns, \code{y} the vector income (or wealth), \code{weights} the vector of weights, \code{Fw} the cumulated proportion of people (with weights) and \code{Fx} the cumulated proportion of people (without weights)
+#' @examples
+#' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+#' df <- read.table(url_1,sep=";",header=TRUE)
+#' data_1  <-  tidy_income(income = df$y, weights = df$w)
+#' str(data_1)
 tidy_income <- function(income, weights){
 df=data.frame(w=weights, y=income)
 df$w=df$w/sum(df$w)
@@ -993,14 +986,17 @@ return(data)
 #' @param q numeric, the probability level to model a Pareto distribution (default 10% - top 10%)
 #' @param viz logical \code{TRUE} to plot the estimates
 #' @return a table with estimations of top share and a graph
+#' @examples
+#' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+#' df <- read.table(url_1,sep=";",header=TRUE)
+#' data_1  <-  tidy_income(income = df$y, weights = df$w)
+#' \dontrun{Pareto_diagram(data_1)}
 Pareto_diagram = function(data, p=.01, q=.1, viz=TRUE){
 
 res1=TopShare(data, p=p, q=q, method="pareto1")
 res2=TopShare(data, p=p, q=q, method="gpd")
-res3=TopShare(data, p=p, q=q, method="epd", epd.direct=epd.direct)
-
+res3=TopShare(data, p=p, q=q, method="epd", epd.direct= TRUE)
 pot=data[data$y>0,]   # Keep positive data
-
 if(viz) par(mfrow=c(1,1), mar=c(4, 4, 4, 1))  # bottom, left, top, right
 if(viz) plot(log(pot$y), log(1-pot$Fw), xlab="log(x)", ylab="log(1-F(x))", cex=.6, col="gray", xlim=PDxlim)
 
@@ -1014,19 +1010,13 @@ lines(u,log(1-yhat.epd)+log(q), col="red", lty=1, lwd=1.5)
 lines(u,log(1-yhat.par2)+log(q),col="green", lty=3, lwd=1.5)
 legend("topright", legend=c("Pareto 1", "GPD", "EPD"), col=c("blue","green", "red"), lty=c(2,3,1))
 }
-
-# plot percentile as vertical dashed lines
-
 res90=TopShare(data, p=p, q=.10, method="pareto1")
 if(viz) abline(v=log(res90$threshold), col="lightgrey", lty=2)  # percentile 90
-#legend(log(res90$threshold)-top.x, top.y, legend=c("top10%"), cex=.82, bty="n")
 if(viz) legend(log(res90$threshold)-top.x, top.y, legend=expression(italic('q')[90]), cex=.9, bty="n")
-
 res95=TopShare(data, p=p, q=.05, method="pareto1")
 if(viz) abline(v=log(res95$threshold), col="lightgrey", lty=2)  # percentile 95
 if(viz) legend(log(res95$threshold)-top.x, top.y, legend=expression(italic('q')[95]), cex=.9, bty="n")
-
-if(viz) res99=TopShare(data, p=p, q=.01, method="pareto1")
+res99=TopShare(data, p=p, q=.01, method="pareto1")
 if(viz) abline(v=log(res99$threshold), col="lightgrey", lty=2)  # percentile 99
 legend(log(res99$threshold)-top.x, top.y, legend=expression(italic('q')[99]), cex=.9, bty="n")
 }
@@ -1034,11 +1024,16 @@ legend(log(res99$threshold)-top.x, top.y, legend=expression(italic('q')[99]), ce
 #' Table of top shares (using three thresholds)
 #'
 #' @param data dataframe obtained from \code{tidy_income} function
-#' @p probability level (default 1%)
+#' @param p probability level (default 1%)
 #' @param q1 numeric, the probability level to model a Pareto distribution (default 10% - top 10%)
 #' @param q2 numeric, the probability level to model a Pareto distribution (default 5% - top 5%)
 #' @param q3 numeric, the probability level to model a Pareto distribution (default 1% - top 1%)
-Table_Top_Share = function(data, p=.01, q1=.1 , q2=.05 , q3=.01){
+#' @examples
+#' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+#' df <- read.table(url_1,sep=";",header=TRUE)
+#' data_1  <-  tidy_income(income = df$y, weights = df$w)
+#' Table_Top_Share(data_1)$Mat_index
+Table_Top_Share = function(data, p=.01, q1=.1 , q2=.05 , q3=.01, verbose=FALSE){
 
 res90=TopShare(data, p=p, q=q1, method="pareto1")
 res95=TopShare(data, p=p, q=q2, method="pareto1")
@@ -1059,28 +1054,34 @@ epd.index=cbind(res90$index, res95$index, res99$index)
 epd.alpha=cbind(res90$alpha, res95$alpha, res99$alpha)
 
 cutoff=c(1-q1,1-q2,1-q3)
+M1=rbind(cutoff,pareto1.index,gpd.index,epd.index)
+colnames(M1)=c("index1","index2","index3")
+M2=rbind(cutoff,pareto1.alpha,gpd.alpha,epd.alpha)
+colnames(M2)=c("alpha1","alpha2","alpha3")
+if(verbose){
 cat("----- index ----------\n")
-M=rbind(cutoff,pareto1.index,gpd.index,epd.index)
-colnames(M)=c("index1","index2","index3")
-print(M)
+print(M1)
 cat("----- alpha ----------\n")
-M=rbind(cutoff,pareto1.alpha,gpd.alpha,epd.alpha)
-colnames(M)=c("alpha1","alpha2","alpha3")
-print(M)
+print(M2)
 cat("----- top share ------\n")
     T=TopShare(data, p=p)
-print(T)
-    return(T)}
+print(T)}
+    return(list(Mat_index=M1,Mat_alpha=M2,TopShare=T))}
 
 #' Top Income plot
 #'
 #' @param data dataframe obtained from \code{tidy_income} function
-#' @p probability level (default 1%)
+#' @param p probability level (default 1%)
 #' @param thr numeric vector of probability levels to model a Pareto distribution (from 85% up to 99.9%)
-#' @param TSlim numeric 2-vector, range of y for the plot (default \cote{NULL})
-#' @param tail logical to plot the tail index (default \cote{TRUE})
+#' @param TSlim numeric 2-vector, range of y for the plot (default \code{NULL})
+#' @param tail logical to plot the tail index (default \code{TRUE})
+#' @return one or two graphs (depending on \code{tail==TRUE})
+#' @examples
+#' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+#' df <- read.table(url_1,sep=";",header=TRUE)
+#' data_1  <-  tidy_income(income = df$y, weights = df$w)
+#' \dontrun{Top_Income(data_1)}
 Top_Income = function(data, p=.01, thr=seq(.85,.999,by=.001), TSlim=NULL, tail = TRUE){
-
 thr=round(thr,10)
 tail=matrix(0,NROW(thr),7)
 tis.index=matrix(0,NROW(thr),7)
@@ -1089,7 +1090,7 @@ for(i in 1:NROW(thr)) {
     
     res1=TopShare(data, p=p, q=1-thr[i], method="pareto1")
     res2=TopShare(data, p=p, q=1-thr[i], method="gpd")
-    res3=TopShare(data, p=p, q=1-thr[i], method="epd", epd.direct=epd.direct)
+    res3=TopShare(data, p=p, q=1-thr[i], method="epd", epd.direct=TRUE)
     res4=TopShare(data, p=p, method="edf")
     
     tis.index[i,1]=res1$threshold     # threshold y0

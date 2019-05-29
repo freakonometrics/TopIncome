@@ -2,19 +2,12 @@ Pareto models for top-incomes
 ================
 Arthur Charpentier & Emmanuel Flachaire
 
-
 # Install the `TopIncome` library
 
 ``` r
-library(devtools)
-devtools::install_github("freakonometrics/TopIncome")
-```
-
-    ## Skipping install of 'TopIncome' from a github remote, the SHA1 (2af9086f) has not changed since last install.
-    ##   Use `force = TRUE` to force installation
-
-``` r
-library(TopIncome)
+#library(devtools)
+#devtools::install_github("freakonometrics/TopIncome")
+#library(TopIncome)
 ```
 
 # Fitting Pareto Models
@@ -27,6 +20,10 @@ w <- rgamma(n,10,10)
 ```
 
 ## Pareto 1
+
+The **Pareto type 1** distribution is bounded from below by \(u>0\),
+with tail parameter ![](http://latex.codecogs.com/gif.latex?%5Calpha) :
+the probability density function ….
 
 ``` r
 estim <- MLE.pareto1(data=x, weights=w, threshold=1)
@@ -70,62 +67,69 @@ EPD(data=x, weights=w)
 # Application to Income
 
 ``` r
-pays="za"           # choix du pays South-Africa 2012 (za) or USA 2013 (us)
-useweights=1        # estimation avec poids (1) ou sans poids (0)
-epd.direct="TRUE"   # methode EPD: indirect (FALSE) or direct (TRUE) method
+url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+df <- read.table(url_1,sep=";",header=TRUE)
 
-  df <- read.table("Ineq-pareto/appli/data/LIS/za12.LIS.txt",header=TRUE)
-  PDxlim=c(9,14.2)
-  ysup=5
-  top.x=.25 ; top.y=.4
-  top.xx=38 ; top.yy=.11
+  PDxlim <- c(9,14.2)
+  ysup <- 5
+  top.x <- .25 ; top.y <- .4
+  top.xx <- 38 ; top.yy <- .11
 
-data_za = tidy_income(income = df$y, weights = df$w)
-Pareto_diagram(data_za)
+data_1  <-  tidy_income(income = df$y, weights = df$w)
+Pareto_diagram(data_1)
 ```
 
 ![](Top-Income_Package_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-Table_Top_Share(data_za)
+T <- Table_Top_Share(data_1, p=.01)
 ```
 
-    ## ----- index ----------
-    ##           index1    index2    index3
-    ## cutoff 0.9000000 0.9500000 0.9900000
-    ##        0.1924827 0.1706478 0.1461168
-    ## xi     0.1417580 0.1413610 0.1393819
-    ##        0.1479852 0.1494570 0.1394055
-    ## ----- alpha ----------
-    ##          alpha1   alpha2    alpha3
-    ## cutoff 0.900000 0.950000  0.990000
-    ##        1.741886 1.880571  2.492415
-    ## xi     2.689336 2.934580 19.248707
-    ##        2.236125 2.254958  4.198110
-    ## ----- top share ------
-    ## $index
-    ## [1] 0.1338787
-    ## 
-    ## $share
-    ## [1] 0.01
-    ## 
-    ## $method
-    ## [1] "edf"
-
-    ## $index
-    ## [1] 0.1338787
-    ## 
-    ## $share
-    ## [1] 0.01
-    ## 
-    ## $method
-    ## [1] "edf"
+Tail index \(\alpha\), for three fited distributions
 
 ``` r
-Top_Income(data_za)
+T$Mat_alpha
+```
+
+    ##          alpha1   alpha2    alpha3
+    ## cutoff 0.900000 0.950000  0.990000
+    ##        1.713197 1.959476  2.187579
+    ## xi     2.920797 3.017690 18.662425
+    ##        2.279386 2.343399  4.809314
+
+|           |      90% |      95% |       99% |
+| --------- | -------: | -------: | --------: |
+| Pareto\_1 | 1.713197 | 1.959476 |  2.187579 |
+| GPD       | 2.920797 | 3.017690 | 18.662425 |
+| EPD       | 2.279387 | 2.343399 |  4.809314 |
+
+Tail Index
+
+Top share income, for three fited distributions
+
+``` r
+T$Mat_index
+```
+
+    ##           index1    index2    index3
+    ## cutoff 0.9000000 0.9500000 0.9900000
+    ##        0.1997239 0.1641696 0.1503932
+    ## xi     0.1392083 0.1389045 0.1397348
+    ##        0.1479075 0.1453855 0.1390286
+
+|           |      90% |      95% |      99% |
+| --------- | -------: | -------: | -------: |
+| Pareto\_1 | 19.97239 | 16.41696 | 15.03932 |
+| GPD       | 13.92083 | 13.89045 | 13.97348 |
+| EPD       | 14.79075 | 14.53855 | 13.90286 |
+
+Top Income Share, in percent (for the top 1%)
+
+``` r
+Top_Income(data_1)
 ```
 
     ## Warning in if (tail) {: the condition has length > 1 and only the first
     ## element will be used
 
-![](Top-Income_Package_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+![](Top-Income_Package_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->

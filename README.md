@@ -1,13 +1,21 @@
-Pareto models for top-incomes
+Pareto models for Top Incomes
 ================
 Arthur Charpentier & Emmanuel Flachaire
 
 # Install the `TopIncome` library
 
+The `TopIncome` library can be installed from *github*,
+
 ``` r
-#library(devtools)
-#devtools::install_github("freakonometrics/TopIncome")
-#library(TopIncome)
+library(devtools)
+devtools::install_github("freakonometrics/TopIncome")
+```
+
+    ## Skipping install of 'TopIncome' from a github remote, the SHA1 (cf248e20) has not changed since last install.
+    ##   Use `force = TRUE` to force installation
+
+``` r
+library(TopIncome)
 ```
 
 # Fitting Pareto Models
@@ -123,7 +131,8 @@ T$Mat_index
 | GPD       | 13.92083 | 13.89045 | 13.97348 |
 | EPD       | 14.79075 | 14.53855 | 13.90286 |
 
-Top Income Share, in percent (for the top 1%)
+Top Income Share, in percent (for the top
+    1%)
 
 ``` r
 Top_Income(data_1)

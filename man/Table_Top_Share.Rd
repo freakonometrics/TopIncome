@@ -10,13 +10,13 @@ Table_Top_Share(data, p = 0.01, q1 = 0.1, q2 = 0.05, q3 = 0.01,
 \arguments{
 \item{data}{dataframe obtained from \code{tidy_income} function}
 
-\item{p}{probability level (default 1%)}
+\item{p}{probability level (default 0.01)}
 
-\item{q1}{numeric, the probability level to model a Pareto distribution (default 10% - top 10%)}
+\item{q1}{numeric, the probability level to model a Pareto distribution (default 0.1)}
 
-\item{q2}{numeric, the probability level to model a Pareto distribution (default 5% - top 5%)}
+\item{q2}{numeric, the probability level to model a Pareto distribution (default 0.05)}
 
-\item{q3}{numeric, the probability level to model a Pareto distribution (default 1% - top 1%)}
+\item{q3}{numeric, the probability level to model a Pareto distribution (default 0.01)}
 }
 \description{
 Table of top shares (using three thresholds)

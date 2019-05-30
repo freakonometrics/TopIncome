@@ -20,7 +20,7 @@ TopShare(data, p = 0.1, q = 0.1, method = "edf", epd.direct = TRUE)
 \item{edp.direct}{logical (default \code{TRUE})}
 }
 \value{
-estimation of the share of income/wealth owned by the top 100p% of the population, assuming that the top 100q% of the distribution is Pareto distributed
+estimation of the share of income/wealth owned by the top p percent of the population, assuming that the top q percent of the distribution is Pareto distributed
 }
 \description{
 Estimate Top Share

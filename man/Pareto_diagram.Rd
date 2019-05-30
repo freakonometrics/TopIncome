@@ -9,9 +9,9 @@ Pareto_diagram(data, p = 0.01, q = 0.1, viz = TRUE)
 \arguments{
 \item{data}{dataframe obtained from \code{tidy_income} function}
 
-\item{p}{numeric, the probability level (default 1%)}
+\item{p}{numeric, the probability level (default 0.01)}
 
-\item{q}{numeric, the probability level to model a Pareto distribution (default 10% - top 10%)}
+\item{q}{numeric, the probability level to model a Pareto distribution (default 0.1)}
 
 \item{viz}{logical \code{TRUE} to plot the estimates}
 }

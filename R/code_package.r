@@ -848,7 +848,7 @@ ReturnEPD <- function(data, q, gamma, kappa, tau, ...) {
 #' @param q (default \code{0.1})
 #' @param method (default \code{"edf"}, but can be \code{"pareto1"} or \code{"gpd"})
 #' @param edp.direct logical (default \code{TRUE})
-#' @return estimation of the share of income/wealth owned by the top 100p% of the population, assuming that the top 100q% of the distribution is Pareto distributed
+#' @return estimation of the share of income/wealth owned by the top p percent of the population, assuming that the top q percent of the distribution is Pareto distributed
 #' @examples
 #' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
 #' df <- read.table(url_1,sep=";",header=TRUE)
@@ -982,8 +982,8 @@ return(data)
 #' Pareto diagrams - Pareto 1, GPD and EPD
 #'
 #' @param data dataframe obtained from \code{tidy_income} function
-#' @param p numeric, the probability level (default 1%)
-#' @param q numeric, the probability level to model a Pareto distribution (default 10% - top 10%)
+#' @param p numeric, the probability level (default 0.01)
+#' @param q numeric, the probability level to model a Pareto distribution (default 0.1)
 #' @param viz logical \code{TRUE} to plot the estimates
 #' @return a table with estimations of top share and a graph
 #' @examples
@@ -1024,10 +1024,10 @@ legend(log(res99$threshold)-top.x, top.y, legend=expression(italic('q')[99]), ce
 #' Table of top shares (using three thresholds)
 #'
 #' @param data dataframe obtained from \code{tidy_income} function
-#' @param p probability level (default 1%)
-#' @param q1 numeric, the probability level to model a Pareto distribution (default 10% - top 10%)
-#' @param q2 numeric, the probability level to model a Pareto distribution (default 5% - top 5%)
-#' @param q3 numeric, the probability level to model a Pareto distribution (default 1% - top 1%)
+#' @param p probability level (default 0.01)
+#' @param q1 numeric, the probability level to model a Pareto distribution (default 0.1)
+#' @param q2 numeric, the probability level to model a Pareto distribution (default 0.05)
+#' @param q3 numeric, the probability level to model a Pareto distribution (default 0.01)
 #' @examples
 #' url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
 #' df <- read.table(url_1,sep=";",header=TRUE)
@@ -1071,8 +1071,8 @@ print(T)}
 #' Top Income plot
 #'
 #' @param data dataframe obtained from \code{tidy_income} function
-#' @param p probability level (default 1%)
-#' @param thr numeric vector of probability levels to model a Pareto distribution (from 85% up to 99.9%)
+#' @param p probability level (default 0.01)
+#' @param thr numeric vector of probability levels to model a Pareto distribution (from 0.85 up to 0.999)
 #' @param TSlim numeric 2-vector, range of y for the plot (default \code{NULL})
 #' @param tail logical to plot the tail index (default \code{TRUE})
 #' @return one or two graphs (depending on \code{tail==TRUE})

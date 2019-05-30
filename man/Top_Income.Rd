@@ -10,9 +10,9 @@ Top_Income(data, p = 0.01, thr = seq(0.85, 0.999, by = 0.001),
 \arguments{
 \item{data}{dataframe obtained from \code{tidy_income} function}
 
-\item{p}{probability level (default 1%)}
+\item{p}{probability level (default 0.01)}
 
-\item{thr}{numeric vector of probability levels to model a Pareto distribution (from 85% up to 99.9%)}
+\item{thr}{numeric vector of probability levels to model a Pareto distribution (from 0.85 up to 0.999)}
 
 \item{TSlim}{numeric 2-vector, range of y for the plot (default \code{NULL})}
 

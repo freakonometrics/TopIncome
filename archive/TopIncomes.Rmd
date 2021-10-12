@@ -1,0 +1,125 @@
+---
+title: "Pareto models for top-incomes"
+author: "Arthur Charpentier & Emmanuel Flachaire"
+output: github_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#setwd("/Users/acharpen/Dropbox (Télécom SudParis)")
+library(devtools)
+#devtools::install_github("freakonometrics/TopIncome")
+#library(TopIncome)
+library(Hmisc)
+library(knitr)
+latexImg = function(latex){
+    link = paste0('http://latex.codecogs.com/gif.latex?',
+           gsub('\\=','%3D',URLencode(latex)))
+    link = gsub("(%..)","\\U\\1",link,perl=TRUE)
+    return(paste0('![](',link,')'))
+}
+```
+
+# Install the `TopIncome` library
+
+The `TopIncome` library can be installed from *github*,
+
+```{r}
+library(devtools)
+devtools::install_github("freakonometrics/TopIncomes")
+library(TopIncomes)
+```
+
+# Fitting Pareto Models
+
+```{r}
+n <- 1000
+set.seed(123)
+x <- repd(n,.5,1,-1)
+w <- rgamma(n,10,10)
+```
+
+## Pareto 1
+
+The **Pareto type 1** distribution is bounded from below by $u>0$, and with tail parameter `r latexImg('\\alpha')` it has the cumulative distribution function
+`r latexImg('\\displaystyle{F(x)=1-\\left(\\frac{x}{u}\\right)^{-\\alpha}}')` for `r latexImg('x\\geq u')`. Note that the tail index is `r latexImg('\\xi=1/\\alpha')`.
+
+```{r}
+estim <- MLE.pareto1(data=x, weights=w, threshold=1)
+estim
+```
+
+## Generalized Pareto 
+
+The **Generalized Pareto** distribution is bounded from below by $u>0$, with tail parameter `r latexImg('\\alpha')` : the cumulative distribution function is
+`r latexImg('\\displaystyle{F(x)=1-\\left[1+\\left(\\frac{x-u}{\\sigma}\\right)\\right]^{-\\alpha}}')` for `r latexImg('x\\geq u')`. Note that the tail index is `r latexImg('\\xi=1/\\alpha')`.
+
+```{r}
+estim <- MLE.gpd(data=x, weights=w, threshold=1)
+estim
+```
+
+## Extended Pareto 
+
+The **Extended Pareto** distribution is bounded from below by $u>0$, and has cumulative distribution function
+`r latexImg('\\displaystyle{F(x)=1-\\left[\\frac{x}{u}\\left(1+\\delta-\\delta\\left(\\frac{x}{u}\\right)^\\tau\\right)\\right]^{-\\alpha} }')` for `r latexImg('x\\geq u')`. Note that the tail index is `r latexImg('\\xi=1/\\alpha')`.
+
+```{r}
+estim <- EPD(data=x, weights=w)
+estim
+```
+
+# Application to Income
+
+Consider some simulated data,
+
+```{r}
+url_1 <- "https://github.com/freakonometrics/TopIncome/raw/master/data_csv/dataframe_yw_1.csv"
+df <- read.table(url_1,sep=";",header=TRUE)
+data_1  <-  tidy_income(income = df$y, weights = df$w)
+Pareto_diagram(data_1)
+```
+
+```{r}
+T <- Table_Top_Share(data_1, p=.01)
+```
+
+Tail index `r latexImg('\\alpha')`, for three fited distributions
+
+```{r}
+T$TailIndex
+```
+
+```{r, echo=FALSE}
+library(knitr)
+dt=data.frame(T$TailIndex)[-1,]
+q=c(.1,.05,.01)
+names(dt)=paste("top",round(100*(1-q)),"%",sep="")
+rownames(dt)=c("Pareto_1","GPD","EPD")
+kable(dt,caption="Tail Index (alpha)",bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+Top share income, for three fited distributions
+
+```{r}
+T$TopShare
+```
+
+```{r, echo=FALSE}
+dt=data.frame(T$TopShare*100)[-1,]
+q=c(.1,.05,.01)
+names(dt)=paste("top",round(100*(1-q)),"%",sep="")
+rownames(dt)=c("EDF","Pareto_1","GPD","EPD")
+kable(dt,caption="Top Share (in percent)", bootstrap_options = c("striped", "hover"), full_width = FALSE)
+```
+
+See also (to get automatically tables in a markdown format)
+
+```{r}
+# T <- Table_Top_Share(data_1, p=.01, md=TRUE)
+```
+
+
+```{r}
+Top_Incomes(data_1)
+```
